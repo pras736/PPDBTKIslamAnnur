@@ -95,8 +95,12 @@
                   TK Islam Annur berkomitmen memberikan pendidikan karakter dan dasar-dasar literasi-numerasi melalui pendekatan bermain yang terarah, sesuai nilai-nilai Islam.
                 </p>
               </div>
-            </section>
-
+                    <hr>
+                    <div class="mb-2">
+                    <hr>
+                    <div class="mb-2">
+                      <strong>Login Terakhir:</strong> {{ $last_login }}
+                    </div>
             <section class="card border-0 shadow-soft mb-4">
               <div class="card-body">
                 <h3 class="h5 mb-3">Visi & Misi</h3>
