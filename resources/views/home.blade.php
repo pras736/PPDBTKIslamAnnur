@@ -1,235 +1,309 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TK Islam Annur</title>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Laravel App</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Custom CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-        }
-
-        .navbar-brand {
-            font-weight: bold;
-        }
-
-        .navbar {
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .hero-section {
-            background-color: #3187e9;
-            color: white;
-            padding: 50px 0;
-            text-align: center;
-        }
-
-        .hero-section h1 {
-            font-size: 3rem;
-        }
-
-        .card {
-            margin-top: 30px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .footer {
-            margin-top: 50px;
-            padding: 20px 0;
-            background-color: #f8f9fa;
-            text-align: center;
-        }
-
-        .footer p {
-            margin: 0;
-            font-size: 0.9rem;
-            color: #6c757d;
-        }
+      /* Brand color override: emerald + amber, 4-color palette total */
+      :root{
+        --brand: #16a34a;   /* emerald-600 */
+        --brand-700: #15803d;
+        --accent: #f59e0b;  /* amber-500 */
+        --muted: #6b7280;   /* gray-500 */
+      }
+      .bg-brand{ background-color: var(--brand) !important; }
+      .text-brand{ color: var(--brand) !important; }
+      .btn-brand{
+        background-color: var(--brand); border-color: var(--brand);
+        color: #fff;
+      }
+      .btn-brand:hover{ background-color: var(--brand-700); border-color: var(--brand-700); }
+      .badge-accent{ background-color: var(--accent); }
+      .nav-link.active{ color: var(--brand) !important; font-weight: 600; }
+      .hero{
+        background: linear-gradient(180deg, rgba(22,163,74,0.08), rgba(22,163,74,0.02));
+      }
+      .logo-rounded{
+        border-radius: 0.5rem; border: 2px solid #e5e7eb; background:#fff;
+      }
+      .shadow-soft{ box-shadow: 0 10px 24px rgba(16,24,40,0.06); }
     </style>
-</head>
-
-<body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container">
-            <a class="navbar-brand" href="#">My Laravel App</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Features</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Pricing</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Contact</a>
-                    </li>
-                </ul>
-            </div>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg bg-white border-bottom">
+      <div class="container">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="#beranda" aria-label="TK Islam Annur">
+          <img src="{{ asset('images/logo-tk-annur.jpg') }}" width="36" height="36" alt="Logo TK Islam Annur" class="logo-rounded" />
+          <span class="fw-bold text-brand">TK Islam Annur</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain" aria-controls="navMain" aria-expanded="false" aria-label="Buka navigasi">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navMain">
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center">
+            <li class="nav-item"><a class="nav-link active" href="#beranda">Beranda</a></li>
+            <li class="nav-item"><a class="nav-link" href="#tentang">Tentang</a></li>
+            <li class="nav-item"><a class="nav-link" href="#program">Program</a></li>
+            <li class="nav-item"><a class="nav-link" href="#guru">Guru</a></li>
+            <li class="nav-item"><a class="nav-link" href="#kontak">Kontak</a></li>
+            <li class="nav-item ms-lg-3">
+              <a class="btn btn-brand btn-sm px-3" href="#ppdb">Daftar PPDB</a>
+            </li>
+          </ul>
         </div>
+      </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="container">
-            <h1> {{ $username }} </h1>
-            <p> {{ $last_login }} </p>
+    <header id="beranda" class="hero py-5 py-lg-6">
+      <div class="container">
+        <div class="row align-items-center gy-4">
+          <div class="col-lg-7">
+            <span class="badge badge-accent text-dark mb-3">Yayasan Annur</span>
+            <h1 class="display-5 fw-bold text-balance">Selamat Datang di TK Islam Annur</h1>
+            <p class="lead text-secondary mt-3">
+              Tumbuhkan akhlak, kemandirian, dan kreativitas anak dalam lingkungan islami yang hangat dan menyenangkan.
+            </p>
+            <div class="d-flex flex-wrap gap-2 mt-4">
+              <a href="#ppdb" class="btn btn-brand btn-lg">Daftar PPDB</a>
+              <a href="#tentang" class="btn btn-outline-secondary btn-lg">Pelajari Lebih Lanjut</a>
+            </div>
+          </div>
+          <div class="col-lg-5 text-center">
+            <img src="{{ asset('images/logo-tk-annur.jpg') }}" class="img-fluid p-3 logo-rounded shadow-soft" alt="Lambang TK Islam Annur" width="360" height="360" />
+          </div>
         </div>
-    </section>
+      </div>
+    </header>
 
-    <!-- Content Section -->
-    <section id="content" class="container ">
-        <div class="row">
-            <div class="col-md-6">
-                {{-- About --}}
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title">About Our Application</h5>
-                        <p class="card-text">Our application provides a clean and intuitive interface, allowing users to navigate easily and perform tasks efficiently. Built with Laravel and Bootstrap, it offers flexibility and responsiveness.</p>
-                        <a href="#" class="btn btn-primary">Explore More</a>
-                    </div>
-                </div>
+    <main class="py-5">
+      <div class="container">
+        <div class="row g-4">
+          <div class="col-lg-8">
+            <section id="tentang" class="card border-0 shadow-soft mb-4">
+              <div class="card-body">
+                <h2 class="h4 mb-3">Tentang Sekolah</h2>
+                <p class="text-secondary mb-0">
+                  TK Islam Annur berkomitmen memberikan pendidikan karakter dan dasar-dasar literasi-numerasi melalui pendekatan bermain yang terarah, sesuai nilai-nilai Islam.
+                </p>
+              </div>
+            </section>
 
-                <!-- Accordion -->
-                <div class="accordion" id="accordionExample">
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
-                                About Us
-                            </button>
-                        </h2>
-                        <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
-                            <div class="accordion-body">
-                                We are a tech company that specializes in web development solutions.
-                            </div>
-                        </div>
+            <section class="card border-0 shadow-soft mb-4">
+              <div class="card-body">
+                <h3 class="h5 mb-3">Visi & Misi</h3>
+                <div class="accordion" id="visimisi">
+                  <div class="accordion-item">
+                    <h2 class="accordion-header" id="visi-heading">
+                      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#visi" aria-expanded="true" aria-controls="visi">
+                        Visi
+                      </button>
+                    </h2>
+                    <div id="visi" class="accordion-collapse collapse show" aria-labelledby="visi-heading" data-bs-parent="#visimisi">
+                      <div class="accordion-body">
+                        Menjadi lembaga pendidikan anak usia dini yang unggul dalam membentuk generasi berakhlak mulia, cerdas, dan mandiri.
+                      </div>
                     </div>
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
-                                Our Services
-                            </button>
-                        </h2>
-                        <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                            <div class="accordion-body">
-                                We offer web development, SEO optimization, and digital marketing services.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- Badge, List & Card --}}
-                <div class="card">
-                    <div class="card-body">
-                        <h3 class="h5 mb-3">Badges, List, &amp; Card</h3>
-                        <div class="mb-3">
-                            <span class="badge text-bg-primary">Web Dev</span>
-                            <span class="badge text-bg-success">Laravel</span>
-                            <span class="badge text-bg-danger">Bootstrap</span>
-                        </div>
-                        <ul class="list-group mb-3">
-                            <li class="list-group-item">Item Satu</li>
-                            <li class="list-group-item">Item Dua</li>
-                            <li class="list-group-item">Item Tiga</li>
+                  </div>
+                  <div class="accordion-item">
+                    <h2 class="accordion-header" id="misi-heading">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#misi" aria-expanded="false" aria-controls="misi">
+                        Misi
+                      </button>
+                    </h2>
+                    <div id="misi" class="accordion-collapse collapse" aria-labelledby="misi-heading" data-bs-parent="#visimisi">
+                      <div class="accordion-body">
+                        <ul class="mb-0">
+                          <li>Menanamkan nilai-nilai Islam sejak dini melalui pembiasaan.</li>
+                          <li>Mendorong kreativitas melalui kegiatan bermain dan bereksplorasi.</li>
+                          <li>Membangun kemandirian dan kerja sama dalam lingkungan yang menyenangkan.</li>
                         </ul>
-                        <div class="p-3 border rounded">
-                            <strong>Div umum</strong> — ini hanya <em>container</em> untuk konten bebas.
-                        </div>
-                        <p class="text-muted small mt-3 mb-0">
-                            Gunakan <code>.card</code> untuk konten yang butuh border & sedikit efek shadow.
-                        </p>
+                      </div>
                     </div>
+                  </div>
                 </div>
-            </div>
+              </div>
+            </section>
 
-            <div class="col-md-6">
-                {{-- Alerts --}}
-                <div class="card ">
-                    <div class="card-body">
-                        <h3 class="h5 mb-3">Alerts</h3>
-                        <div class="alert alert-primary mb-2">Informational alert</div>
-                        <div class="alert alert-success mb-2">Success alert</div>
-                        <div class="alert alert-warning mb-2">Warning alert</div>
-                        <div class="alert alert-danger mb-0">Danger alert</div>
-                    </div>
+            <section id="program" class="card border-0 shadow-soft">
+              <div class="card-body">
+                <h3 class="h5 mb-3">Program Unggulan</h3>
+                <div class="mb-3 d-flex flex-wrap gap-2">
+                  <span class="badge bg-success-subtle text-success border">Tahfiz Harian</span>
+                  <span class="badge bg-success-subtle text-success border">Adab & Doa</span>
+                  <span class="badge bg-success-subtle text-success border">Sains Mini</span>
+                  <span class="badge bg-success-subtle text-success border">Kreativitas Seni</span>
                 </div>
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <div class="card h-100">
+                      <div class="card-body">
+                        <h4 class="h6">Kurikulum</h4>
+                        <ul class="list-group list-group-flush">
+                          <li class="list-group-item">PAUD berbasis karakter</li>
+                          <li class="list-group-item">Pembiasaan salat & wudu</li>
+                          <li class="list-group-item">Literasi & numerasi bermain</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="card h-100">
+                      <div class="card-body">
+                        <h4 class="h6">Fasilitas</h4>
+                        <ul class="list-group list-group-flush">
+                          <li class="list-group-item">Kelas nyaman & aman</li>
+                          <li class="list-group-item">Area bermain edukatif</li>
+                          <li class="list-group-item">Peralatan belajar lengkap</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
 
-                {{-- Buttons --}}
-                <div class="card">
-                    <div class="card-body">
-                        <h3 class="h5 mb-3">Buttons</h3>
-                        <div class="d-flex flex-wrap gap-2">
-                            <button class="btn btn-primary">Primary</button>
-                            <button class="btn btn-secondary">Secondary</button>
-                            <button class="btn btn-outline-primary">Outline</button>
-                            <button class="btn btn-success">Success</button>
-                            <button class="btn btn-danger">Danger</button>
-                        </div>
-                    </div>
+          <div class="col-lg-4">
+            <section class="card border-0 shadow-soft mb-4" id="ppdb">
+              <div class="card-body">
+                <h3 class="h5 mb-3">Pengumuman / PPDB</h3>
+                <div class="alert alert-success" role="alert">
+                  Pendaftaran Tahun Ajaran Baru telah dibuka. Klik tombol di bawah untuk mendaftar.
                 </div>
+                <div class="d-grid gap-2">
+                  <a class="btn btn-brand" href="#kontak">Daftar Sekarang</a>
+                </div>
+              </div>
+            </section>
 
-                {{-- Table --}}
-                <div class="card">
-                    <div class="card-body">
-                        <h3 class="h5 mb-3">Table</h3>
-                        <div class="table-responsive">
-                            <table class="table align-middle">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Name</th>
-                                        <th>Role</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Ani</td>
-                                        <td>Admin</td>
-                                        <td><span class="badge text-bg-success">Active</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>2</td>
-                                        <td>Budi</td>
-                                        <td>User</td>
-                                        <td><span class="badge text-bg-secondary">Inactive</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>3</td>
-                                        <td>Cici</td>
-                                        <td>Editor</td>
-                                        <td><span class="badge text-bg-warning">Pending</span></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <p class="text-muted small mb-0">Tambahkan <code>.table-striped</code> atau <code>.table-bordered</code> sesuai kebutuhan.</p>
-                    </div>
+            <section class="card border-0 shadow-soft mb-4">
+              <div class="card-body">
+                <h4 class="h6 mb-3">Aksi Cepat</h4>
+                <div class="d-flex flex-wrap gap-2">
+                  <a class="btn btn-brand btn-sm" href="#tentang">Profil</a>
+                  <a class="btn btn-outline-secondary btn-sm" href="#program">Kegiatan</a>
+                  <a class="btn btn-warning btn-sm text-dark" href="#guru">Data Guru</a>
                 </div>
-            </div>
+              </div>
+            </section>
+
+            <section class="card border-0 shadow-soft">
+              <div class="card-body">
+                <h4 class="h6 mb-3">Jadwal Kegiatan</h4>
+                <div class="table-responsive">
+                  <table class="table table-sm align-middle">
+                    <thead class="table-light">
+                      <tr>
+                        <th>Hari</th>
+                        <th>Kegiatan</th>
+                        <th>Waktu</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr><td>Senin</td><td>Upacara & Tahfiz</td><td>07.30–09.30</td></tr>
+                      <tr><td>Rabu</td><td>Sains Mini</td><td>08.00–09.00</td></tr>
+                      <tr><td>Jumat</td><td>Adab & Doa</td><td>08.00–09.30</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </section>
+          </div>
         </div>
-    </section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; {{date('Y')}} My Laravel App. All Rights Reserved.</p>
+        <section id="guru" class="mt-5">
+          <h2 class="h4 mb-3">Guru Kami</h2>
+          <div class="row g-3">
+            <div class="col-sm-6 col-lg-3">
+              <div class="card h-100 shadow-soft">
+                <div class="card-body text-center">
+                  <img src="/placeholder.svg?height=120&width=120" alt="Foto Guru" class="rounded-circle mb-2" width="120" height="120" />
+                  <div class="fw-semibold">Bu Aisyah</div>
+                  <div class="small text-secondary">Wali Kelas A</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+              <div class="card h-100 shadow-soft">
+                <div class="card-body text-center">
+                  <img src="/placeholder.svg?height=120&width=120" alt="Foto Guru" class="rounded-circle mb-2" width="120" height="120" />
+                  <div class="fw-semibold">Bu Fatimah</div>
+                  <div class="small text-secondary">Wali Kelas B</div>
+                </div>
+              </div>
+            </div>
+             Tambahkan guru lain sesuai kebutuhan
+          </div>
+        </section>
+
+        <section id="kontak" class="mt-5">
+          <h2 class="h4 mb-3">Kontak</h2>
+          <div class="row g-4">
+            <div class="col-lg-6">
+              <div class="card border-0 shadow-soft">
+                <div class="card-body">
+                  <form>
+                    <div class="mb-3">
+                      <label class="form-label" for="nama">Nama</label>
+                      <input class="form-control" id="nama" name="nama" type="text" placeholder="Nama Anda" />
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label" for="email">Email</label>
+                      <input class="form-control" id="email" name="email" type="email" placeholder="email@contoh.com" />
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label" for="pesan">Pesan</label>
+                      <textarea class="form-control" id="pesan" name="pesan" rows="4" placeholder="Tulis pesan Anda"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-brand">Kirim</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="card border-0 shadow-soft h-100">
+                <div class="card-body">
+                  <div class="mb-2 fw-semibold">Alamat</div>
+                  <div class="text-secondary mb-3">Jl. Contoh No. 123, Pekanbaru</div>
+                  <div class="mb-2 fw-semibold">Telepon</div>
+                  <div class="text-secondary mb-3">0812-3456-7890</div>
+                  <div class="mb-2 fw-semibold">Email</div>
+                  <div class="text-secondary">info@tkislamannur.sch.id</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <footer class="border-top py-4 mt-5">
+      <div class="container d-flex flex-column flex-md-row align-items-center justify-content-between gap-2">
+        <div class="d-flex align-items-center gap-2">
+          <img src="{{ asset('images/logo-tk-annur.jpg') }}" width="28" height="28" alt="Logo kecil TK Islam Annur" class="logo-rounded" />
+          <span class="small text-secondary">&copy; {{ date('Y') }} TK Islam Annur. Semua hak dilindungi.</span>
         </div>
+        <div class="small">
+          <a class="link-secondary text-decoration-none me-3" href="#tentang">Tentang</a>
+          <a class="link-secondary text-decoration-none" href="#kontak">Kontak</a>
+        </div>
+      </div>
     </footer>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+  </body>
 </html>
