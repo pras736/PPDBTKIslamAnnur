@@ -99,7 +99,7 @@
                     <div class="mb-2">
                     <hr>
                     <div class="mb-2">
-                      <strong>Login Terakhir:</strong> {{ $last_login }}
+                      <strong>Login Terakhir:</strong> {{ $last_login ?? 'Belum tersedia' }}
                     </div>
             <section class="card border-0 shadow-soft mb-4">
               <div class="card-body">
