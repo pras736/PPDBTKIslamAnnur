@@ -2,124 +2,105 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Akun;
 use App\Models\Murid;
 use App\Models\Pembayaran;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 
-class WalimuridController extends Controller
+class MuridController extends Controller
 {
     /**
-     * Display the wali murid dashboard.
-     */
-    public function index(Request $request)
-    {
-        $user = Auth::user();
-        
-        if (!$user || $user->role !== 'wali') {
-            return redirect()->route('login')->withErrors(['error' => 'Anda harus login sebagai wali murid.']);
-        }
-
-        // Ambil data murid dari akun yang login
-        $murid = Murid::with(['pembayaranTerbaru'])->where('id_akun', $user->id_akun)->first();
-
-        return view('walimurid.dashboard', compact('user', 'murid'));
-    }
-
-    /**
-     * Form pendaftaran murid baru
+     * Menampilkan form pendaftaran murid baru
      */
     public function create()
     {
-        $user = Auth::user();
-        
-        if (!$user || $user->role !== 'wali') {
-            return redirect()->route('login')->withErrors(['error' => 'Anda harus login sebagai wali murid.']);
-        }
-
-        // Cek apakah sudah ada data murid
-        $murid = Murid::where('id_akun', $user->id_akun)->first();
-        if ($murid) {
-            return redirect()->route('walimurid.dashboard')
-                ->with('info', 'Data murid sudah terdaftar. Silakan edit data jika perlu.');
-        }
-
-        return view('walimurid.create');
+        return view('murid.create');
     }
 
     /**
-     * Simpan data pendaftaran murid baru
+     * Menyimpan data pendaftaran murid baru
      */
     public function store(Request $request)
     {
-        $user = Auth::user();
-        
-        if (!$user || $user->role !== 'wali') {
-            return redirect()->route('login')->withErrors(['error' => 'Anda harus login sebagai wali murid.']);
-        }
-
-        // Cek apakah sudah ada data murid
-        $existingMurid = Murid::where('id_akun', $user->id_akun)->first();
-        if ($existingMurid) {
-            return redirect()->route('walimurid.dashboard')
-                ->with('info', 'Data murid sudah terdaftar.');
-        }
-
-        // Validasi: Semua field wajib diisi
+        // Validasi data
         $validated = $request->validate([
-            'no_induk_sekolah' => 'required|string|max:50',
-            'nisn' => 'required|string|max:20',
-            'nik_anak' => 'required|string|max:20',
-            'no_akte' => 'required|string|max:30',
+            // Data Akun
+            'username' => 'required|string|max:255|unique:akuns,username',
+            'password' => 'required|string|min:8|confirmed',
+            
+            // Data Identitas Anak
+            'no_induk_sekolah' => 'nullable|string|max:50',
+            'nisn' => 'nullable|string|max:20',
+            'nik_anak' => 'nullable|string|max:20',
+            'no_akte' => 'nullable|string|max:30',
             'nama_lengkap' => 'required|string|max:150',
-            'nama_panggilan' => 'required|string|max:50',
+            'nama_panggilan' => 'nullable|string|max:50',
             'jenis_kelamin' => 'required|in:L,P',
             'tempat_lahir' => 'required|string|max:100',
             'tanggal_lahir' => 'required|date',
-            'agama' => 'required|string|max:50',
-            'kewarganegaraan' => 'required|string|max:50',
-            'hobi' => 'required|string|max:100',
-            'cita_cita' => 'required|string|max:100',
-            'anak_ke' => 'required|integer',
-            'jumlah_saudara' => 'required|integer',
-            'golongan_darah' => 'required|string|max:5',
-            'berat_badan' => 'required|numeric',
-            'tinggi_badan' => 'required|numeric',
-            'lingkar_kepala' => 'required|numeric',
-            'imunisasi' => 'required|string|max:255',
-            'alamat_jalan' => 'required|string|max:255',
-            'alamat_kelurahan' => 'required|string|max:100',
-            'alamat_kecamatan' => 'required|string|max:100',
-            'alamat_kota' => 'required|string|max:100',
-            'alamat_provinsi' => 'required|string|max:100',
-            'kode_pos' => 'required|string|max:10',
-            'jarak_sekolah' => 'required|string|max:50',
-            'telp_ayah' => 'required|string|max:20',
-            'telp_ibu' => 'required|string|max:20',
-            'nama_ayah' => 'required|string|max:150',
-            'nik_ayah' => 'required|string|max:20',
-            'tempat_lahir_ayah' => 'required|string|max:100',
-            'tanggal_lahir_ayah' => 'required|date',
-            'pendidikan_ayah' => 'required|string|max:50',
-            'pekerjaan_ayah' => 'required|string|max:100',
-            'nama_ibu' => 'required|string|max:150',
-            'nik_ibu' => 'required|string|max:20',
-            'tempat_lahir_ibu' => 'required|string|max:100',
-            'tanggal_lahir_ibu' => 'required|date',
-            'pendidikan_ibu' => 'required|string|max:50',
-            'pekerjaan_ibu' => 'required|string|max:100',
+            'agama' => 'nullable|string|max:50',
+            'kewarganegaraan' => 'nullable|string|max:50',
+            'hobi' => 'nullable|string|max:100',
+            'cita_cita' => 'nullable|string|max:100',
+            'anak_ke' => 'nullable|integer',
+            'jumlah_saudara' => 'nullable|integer',
+            'golongan_darah' => 'nullable|string|max:5',
+            'berat_badan' => 'nullable|numeric',
+            'tinggi_badan' => 'nullable|numeric',
+            'lingkar_kepala' => 'nullable|numeric',
+            'imunisasi' => 'nullable|string|max:255',
+            
+            // Data Alamat
+            'alamat_jalan' => 'nullable|string|max:255',
+            'alamat_kelurahan' => 'nullable|string|max:100',
+            'alamat_kecamatan' => 'nullable|string|max:100',
+            'alamat_kota' => 'nullable|string|max:100',
+            'alamat_provinsi' => 'nullable|string|max:100',
+            'kode_pos' => 'nullable|string|max:10',
+            'jarak_sekolah' => 'nullable|string|max:50',
+            
+            // Kontak
+            'telp_ayah' => 'nullable|string|max:20',
+            'telp_ibu' => 'nullable|string|max:20',
+            
+            // Data Ayah
+            'nama_ayah' => 'nullable|string|max:150',
+            'nik_ayah' => 'nullable|string|max:20',
+            'tempat_lahir_ayah' => 'nullable|string|max:100',
+            'tanggal_lahir_ayah' => 'nullable|date',
+            'pendidikan_ayah' => 'nullable|string|max:50',
+            'pekerjaan_ayah' => 'nullable|string|max:100',
+            
+            // Data Ibu
+            'nama_ibu' => 'nullable|string|max:150',
+            'nik_ibu' => 'nullable|string|max:20',
+            'tempat_lahir_ibu' => 'nullable|string|max:100',
+            'tanggal_lahir_ibu' => 'nullable|date',
+            'pendidikan_ibu' => 'nullable|string|max:50',
+            'pekerjaan_ibu' => 'nullable|string|max:100',
+            
+            // Bukti Pembayaran (wajib saat pendaftaran pertama)
             'bukti_pembayaran' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
-        ], [
-            'required' => 'Field :attribute wajib diisi.',
         ]);
 
         DB::beginTransaction();
         try {
-            // Buat data murid
+            // 1. Buat akun baru
+            $akun = Akun::create([
+                'username' => $validated['username'],
+                'password' => Hash::make($validated['password']),
+                'role' => 'murid',
+            ]);
+
+            // 2. Simpan bukti pembayaran
+            $buktiPath = $request->file('bukti_pembayaran')->store('bukti_pembayaran', 'public');
+
+            // 3. Buat data murid
             $murid = Murid::create([
-                'id_akun' => $user->id_akun,
+                'id_akun' => $akun->id_akun,
                 'status_siswa' => 'pendaftar',
                 'no_induk_sekolah' => $validated['no_induk_sekolah'] ?? null,
                 'nisn' => $validated['nisn'] ?? null,
@@ -164,10 +145,7 @@ class WalimuridController extends Controller
                 'pekerjaan_ibu' => $validated['pekerjaan_ibu'] ?? null,
             ]);
 
-            // Simpan bukti pembayaran
-            $buktiPath = $request->file('bukti_pembayaran')->store('bukti_pembayaran', 'public');
-
-            // Buat data pembayaran dengan status "menunggu"
+            // 4. Buat data pembayaran dengan status "menunggu"
             Pembayaran::create([
                 'id_murid' => $murid->id_murid,
                 'bukti_pembayaran' => $buktiPath,
@@ -176,7 +154,7 @@ class WalimuridController extends Controller
 
             DB::commit();
 
-            return redirect()->route('walimurid.dashboard')
+            return redirect()->route('murid.show', $murid->id_murid)
                 ->with('success', 'Pendaftaran berhasil! Data Anda sedang menunggu verifikasi pembayaran.');
 
         } catch (\Exception $e) {
@@ -187,39 +165,36 @@ class WalimuridController extends Controller
     }
 
     /**
-     * Form edit data murid
+     * Menampilkan detail murid
      */
-    public function edit()
+    public function show($id)
     {
-        $user = Auth::user();
-        
-        if (!$user || $user->role !== 'wali') {
-            return redirect()->route('login')->withErrors(['error' => 'Anda harus login sebagai wali murid.']);
-        }
-
-        $murid = Murid::with('pembayaranTerbaru')->where('id_akun', $user->id_akun)->firstOrFail();
-        
-        // Cek apakah pembayaran ditolak (boleh upload ulang)
-        $bolehUploadBukti = false;
-        if ($murid->pembayaranTerbaru && $murid->pembayaranTerbaru->status_pembayaran === 'ditolak') {
-            $bolehUploadBukti = true;
-        }
-        
-        return view('walimurid.edit', compact('murid', 'bolehUploadBukti'));
+        $murid = Murid::with(['akun', 'pembayaranTerbaru'])->findOrFail($id);
+        return view('murid.show', compact('murid'));
     }
 
     /**
-     * Update data murid
+     * Menampilkan form edit profil murid
      */
-    public function update(Request $request)
+    public function edit($id)
     {
-        $user = Auth::user();
+        $murid = Murid::with('pembayaranTerbaru')->findOrFail($id);
         
-        if (!$user || $user->role !== 'wali') {
-            return redirect()->route('login')->withErrors(['error' => 'Anda harus login sebagai wali murid.']);
+        // Cek apakah pembayaran ditolak (boleh upload ulang)
+        $bolehUploadBukti = false;
+        if ($murid->pembayaranTerbaru && $murid->pembayaranTerbaru->status_pembayaran === 'ditolak') {
+            $bolehUploadBukti = true;
         }
+        
+        return view('murid.edit', compact('murid', 'bolehUploadBukti'));
+    }
 
-        $murid = Murid::with('pembayaranTerbaru')->where('id_akun', $user->id_akun)->firstOrFail();
+    /**
+     * Update data profil murid
+     */
+    public function update(Request $request, $id)
+    {
+        $murid = Murid::with('pembayaranTerbaru')->findOrFail($id);
         
         // Cek apakah pembayaran ditolak (boleh upload ulang)
         $bolehUploadBukti = false;
@@ -227,7 +202,9 @@ class WalimuridController extends Controller
             $bolehUploadBukti = true;
         }
 
+        // Validasi data
         $rules = [
+            // Data Identitas Anak
             'no_induk_sekolah' => 'nullable|string|max:50',
             'nisn' => 'nullable|string|max:20',
             'nik_anak' => 'nullable|string|max:20',
@@ -248,6 +225,8 @@ class WalimuridController extends Controller
             'tinggi_badan' => 'nullable|numeric',
             'lingkar_kepala' => 'nullable|numeric',
             'imunisasi' => 'nullable|string|max:255',
+            
+            // Data Alamat
             'alamat_jalan' => 'nullable|string|max:255',
             'alamat_kelurahan' => 'nullable|string|max:100',
             'alamat_kecamatan' => 'nullable|string|max:100',
@@ -255,14 +234,20 @@ class WalimuridController extends Controller
             'alamat_provinsi' => 'nullable|string|max:100',
             'kode_pos' => 'nullable|string|max:10',
             'jarak_sekolah' => 'nullable|string|max:50',
+            
+            // Kontak
             'telp_ayah' => 'nullable|string|max:20',
             'telp_ibu' => 'nullable|string|max:20',
+            
+            // Data Ayah
             'nama_ayah' => 'nullable|string|max:150',
             'nik_ayah' => 'nullable|string|max:20',
             'tempat_lahir_ayah' => 'nullable|string|max:100',
             'tanggal_lahir_ayah' => 'nullable|date',
             'pendidikan_ayah' => 'nullable|string|max:50',
             'pekerjaan_ayah' => 'nullable|string|max:100',
+            
+            // Data Ibu
             'nama_ibu' => 'nullable|string|max:150',
             'nik_ibu' => 'nullable|string|max:20',
             'tempat_lahir_ibu' => 'nullable|string|max:100',
@@ -282,7 +267,7 @@ class WalimuridController extends Controller
 
         DB::beginTransaction();
         try {
-            // Update data murid (tidak boleh ubah id_murid dan id_akun)
+            // Update data murid
             $murid->update([
                 'no_induk_sekolah' => $validated['no_induk_sekolah'] ?? null,
                 'nisn' => $validated['nisn'] ?? null,
@@ -354,7 +339,7 @@ class WalimuridController extends Controller
 
             DB::commit();
 
-            return redirect()->route('walimurid.dashboard')
+            return redirect()->route('murid.show', $murid->id_murid)
                 ->with('success', 'Data profil berhasil diperbarui!');
 
         } catch (\Exception $e) {
@@ -362,5 +347,48 @@ class WalimuridController extends Controller
             return back()->withInput()
                 ->withErrors(['error' => 'Terjadi kesalahan saat memperbarui data: ' . $e->getMessage()]);
         }
+    }
+
+    /**
+     * Method untuk admin/guru verifikasi pembayaran
+     * Ketika pembayaran diverifikasi, status_siswa otomatis berubah dari "pendaftar" ke "terdaftar"
+     */
+    public function verifikasiPembayaran($idPembayaran)
+    {
+        $pembayaran = Pembayaran::with('murid')->findOrFail($idPembayaran);
+
+        DB::beginTransaction();
+        try {
+            // Update status pembayaran menjadi "diverifikasi"
+            $pembayaran->update([
+                'status_pembayaran' => 'diverifikasi',
+            ]);
+
+            // Update status_siswa dari "pendaftar" menjadi "terdaftar"
+            $pembayaran->murid->update([
+                'status_siswa' => 'terdaftar',
+            ]);
+
+            DB::commit();
+
+            return back()->with('success', 'Pembayaran berhasil diverifikasi. Status siswa berubah menjadi terdaftar.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Method untuk admin/guru tolak pembayaran
+     */
+    public function tolakPembayaran($idPembayaran)
+    {
+        $pembayaran = Pembayaran::findOrFail($idPembayaran);
+
+        $pembayaran->update([
+            'status_pembayaran' => 'ditolak',
+        ]);
+
+        return back()->with('success', 'Pembayaran ditolak. Wali murid dapat mengupload bukti pembayaran ulang.');
     }
 }

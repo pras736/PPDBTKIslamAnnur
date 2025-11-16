@@ -89,15 +89,16 @@
 
                 <!-- User Name -->
                 <h2 class="text-2xl md:text-3xl font-bold animate-fade-in" style="animation-delay: 0.2s;">
-                    {{ $user->name ?? 'Wali Murid' }}
+                    {{ $user->username ?? 'Wali Murid' }}
                 </h2>
 
-                <!-- Email -->
+                <!-- Status -->
                 <p class="text-xl text-white/90 animate-fade-in" style="animation-delay: 0.4s;">
-                    <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                    </svg>
-                    {{ $user->email ?? '-' }}
+                    @if($murid)
+                        Status: <span class="font-bold">{{ ucfirst($murid->status_siswa) }}</span>
+                    @else
+                        Belum ada data murid
+                    @endif
                 </p>
 
                 <!-- CTA Button -->
@@ -147,49 +148,74 @@
                             <!-- Title -->
                             <h5 class="text-2xl font-bold text-gray-900">Data Siswa</h5>
 
-                            <!-- Info Alert -->
-                            <div class="bg-blue-50 border-l-4 border-blue-500 rounded-lg p-4">
-                                <div class="flex items-start gap-3">
-                                    <svg class="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
+                            @if(session('success'))
+                                <div class="bg-green-50 border-l-4 border-green-500 rounded-lg p-4">
+                                    <p class="text-green-800">{{ session('success') }}</p>
+                                </div>
+                            @endif
+
+                            @if(session('info'))
+                                <div class="bg-blue-50 border-l-4 border-blue-500 rounded-lg p-4">
+                                    <p class="text-blue-800">{{ session('info') }}</p>
+                                </div>
+                            @endif
+
+                            @if($murid)
+                                <!-- Data Murid -->
+                                <div class="space-y-4">
                                     <div>
-                                        <p class="font-semibold text-blue-900">Informasi:</p>
-                                        <p class="text-blue-800 text-sm mt-1">Belum ada data siswa terhubung. Tambahkan relasi siswa di model User jika diperlukan.</p>
+                                        <p class="text-sm text-gray-500">Nama Lengkap</p>
+                                        <p class="text-lg font-semibold text-gray-900">{{ $murid->nama_lengkap }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-500">Status Siswa</p>
+                                        <p class="text-lg font-semibold">
+                                            <span class="px-3 py-1 rounded-full {{ $murid->status_siswa === 'terdaftar' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
+                                                {{ ucfirst($murid->status_siswa) }}
+                                            </span>
+                                        </p>
+                                    </div>
+                                    @if($murid->pembayaranTerbaru)
+                                        <div>
+                                            <p class="text-sm text-gray-500">Status Pembayaran</p>
+                                            <p class="text-lg font-semibold">
+                                                @if($murid->pembayaranTerbaru->status_pembayaran === 'diverifikasi')
+                                                    <span class="px-3 py-1 rounded-full bg-green-100 text-green-800">Diverifikasi</span>
+                                                @elseif($murid->pembayaranTerbaru->status_pembayaran === 'ditolak')
+                                                    <span class="px-3 py-1 rounded-full bg-red-100 text-red-800">Ditolak</span>
+                                                @else
+                                                    <span class="px-3 py-1 rounded-full bg-yellow-100 text-yellow-800">Menunggu</span>
+                                                @endif
+                                            </p>
+                                        </div>
+                                    @endif
+                                </div>
+
+                                <div class="pt-6">
+                                    <a href="{{ route('walimurid.edit') }}" class="inline-block px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors">
+                                        Edit Data Anak
+                                    </a>
+                                </div>
+                            @else
+                                <!-- Info Alert -->
+                                <div class="bg-blue-50 border-l-4 border-blue-500 rounded-lg p-4">
+                                    <div class="flex items-start gap-3">
+                                        <svg class="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        <div>
+                                            <p class="font-semibold text-blue-900">Belum ada data siswa</p>
+                                            <p class="text-blue-800 text-sm mt-1">Silakan isi formulir pendaftaran untuk mendaftarkan anak Anda.</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <!-- Features List -->
-                            <div class="pt-4">
-                                <p class="text-gray-700 font-medium mb-4">Setelah data siswa ditambahkan, Anda akan dapat melihat:</p>
-                                <ul class="space-y-3">
-                                    <li class="flex items-center gap-3 text-gray-700">
-                                        <svg class="w-5 h-5 text-green-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
-                                        </svg>
-                                        <span>Informasi profil siswa lengkap</span>
-                                    </li>
-                                    <li class="flex items-center gap-3 text-gray-700">
-                                        <svg class="w-5 h-5 text-green-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
-                                        </svg>
-                                        <span>Jadwal kegiatan harian</span>
-                                    </li>
-                                    <li class="flex items-center gap-3 text-gray-700">
-                                        <svg class="w-5 h-5 text-green-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
-                                        </svg>
-                                        <span>Laporan perkembangan belajar</span>
-                                    </li>
-                                    <li class="flex items-center gap-3 text-gray-700">
-                                        <svg class="w-5 h-5 text-green-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
-                                        </svg>
-                                        <span>Riwayat kehadiran</span>
-                                    </li>
-                                </ul>
-                            </div>
+                                <div class="pt-6">
+                                    <a href="{{ route('walimurid.create') }}" class="inline-block px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors">
+                                        Isi Formulir Pendaftaran
+                                    </a>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -202,35 +228,37 @@
                         <p class="text-green-100">Akses fitur-fitur penting dengan mudah</p>
                     </div>
 
-                    <!-- Menu Item 1 -->
-                    <a href="#" class="block bg-white rounded-2xl p-5 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100">
-                        <div class="flex items-center gap-4">
-                            <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                                <svg class="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
-                                </svg>
+                    @if(!$murid)
+                        <!-- Menu Item 1 -->
+                        <a href="{{ route('walimurid.create') }}" class="block bg-white rounded-2xl p-5 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100">
+                            <div class="flex items-center gap-4">
+                                <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h6 class="font-bold text-gray-900">Formulir Pendaftaran</h6>
+                                    <p class="text-sm text-gray-500">Daftarkan anak Anda</p>
+                                </div>
                             </div>
-                            <div>
-                                <h6 class="font-bold text-gray-900">Daftar Kegiatan</h6>
-                                <p class="text-sm text-gray-500">Lihat semua aktivitas</p>
+                        </a>
+                    @else
+                        <!-- Menu Item 1 -->
+                        <a href="{{ route('walimurid.edit') }}" class="block bg-white rounded-2xl p-5 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100">
+                            <div class="flex items-center gap-4">
+                                <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h6 class="font-bold text-gray-900">Edit Data</h6>
+                                    <p class="text-sm text-gray-500">Ubah data anak</p>
+                                </div>
                             </div>
-                        </div>
-                    </a>
-
-                    <!-- Menu Item 2 -->
-                    <a href="#" class="block bg-white rounded-2xl p-5 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100">
-                        <div class="flex items-center gap-4">
-                            <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                                <svg class="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
-                                </svg>
-                            </div>
-                            <div>
-                                <h6 class="font-bold text-gray-900">Kontak Sekolah</h6>
-                                <p class="text-sm text-gray-500">Hubungi kami</p>
-                            </div>
-                        </div>
-                    </a>
+                        </a>
+                    @endif
                 </div>
             </div>
         </div>
