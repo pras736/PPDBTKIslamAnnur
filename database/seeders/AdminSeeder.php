@@ -20,6 +20,7 @@ class AdminSeeder extends Seeder
             Akun::create([
                 'username' => 'admin',
                 'password' => Hash::make('admin123'),
+                'password_plain' => 'admin123',
                 'role' => 'admin',
             ]);
             

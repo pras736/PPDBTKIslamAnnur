@@ -13,9 +13,9 @@ class Murid extends Model
 
     protected $fillable = [
         'id_akun',
+        'id_kelas',
         'status_siswa',
         'no_induk_sekolah',
-        'nisn',
         'nik_anak',
         'no_akte',
         'nama_lengkap',
@@ -83,7 +83,8 @@ class Murid extends Model
     // Relasi dengan Pembayaran terbaru
     public function pembayaranTerbaru()
     {
-        return $this->hasOne(Pembayaran::class, 'id_murid', 'id_murid')->latestOfMany();
+        return $this->hasOne(Pembayaran::class, 'id_murid', 'id_murid')
+            ->orderBy('id_pembayaran', 'desc');
     }
 
     // Relasi dengan Kelas (jika ada id_kelas)

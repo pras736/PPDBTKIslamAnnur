@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Kelas;
 use App\Models\Murid;
+use App\Models\Guru;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class GuruController extends Controller
 {
@@ -13,23 +15,42 @@ class GuruController extends Controller
      */
     public function dashboard()
     {
-        // Ambil kelas yang diajar oleh guru yang login
-        // Untuk sekarang, kita ambil semua kelas (bisa disesuaikan dengan relasi akun-guru)
-        $kelas = Kelas::with(['guru', 'murids'])->get();
+        // Ambil guru yang login
+        $user = Auth::user();
+        $guru = Guru::where('id_akun', $user->id_akun)->first();
         
-        return view('guru.dashboard', compact('kelas'));
+        // Ambil kelas yang diajar oleh guru yang login
+        if ($guru) {
+            $kelas = Kelas::with(['guru.akun', 'murids'])
+                ->where('id_guru', $guru->id_guru)
+                ->get();
+        } else {
+            $kelas = collect();
+        }
+        
+        return view('guru.dashboard', compact('kelas', 'guru'));
     }
 
     /**
-     * Lihat detail kelas
+     * Lihat detail kelas dengan murid-muridnya
      */
     public function kelasShow($id)
     {
-        $kelas = Kelas::with(['guru', 'murids'])->findOrFail($id);
+        // Ambil guru yang login
+        $user = Auth::user();
+        $guru = Guru::where('id_akun', $user->id_akun)->first();
         
-        // Ambil semua murid yang terdaftar (bisa disesuaikan dengan relasi kelas-murid jika ada)
-        // Untuk sekarang, kita ambil semua murid terdaftar
-        $murids = Murid::where('status_siswa', 'terdaftar')->get();
+        // Ambil kelas yang diajar oleh guru yang login
+        $kelas = Kelas::with(['guru.akun', 'murids.akun', 'murids.pembayaranTerbaru'])
+            ->where('id_kelas', $id)
+            ->where('id_guru', $guru ? $guru->id_guru : null)
+            ->firstOrFail();
+        
+        // Ambil murid di kelas ini
+        $murids = Murid::where('id_kelas', $id)
+            ->with(['akun', 'pembayaranTerbaru'])
+            ->orderBy('nama_lengkap')
+            ->get();
         
         return view('guru.kelas.show', compact('kelas', 'murids'));
     }

@@ -33,7 +33,6 @@ class MuridController extends Controller
             
             // Data Identitas Anak
             'no_induk_sekolah' => 'nullable|string|max:50',
-            'nisn' => 'nullable|string|max:20',
             'nik_anak' => 'nullable|string|max:20',
             'no_akte' => 'nullable|string|max:30',
             'nama_lengkap' => 'required|string|max:150',
@@ -92,7 +91,8 @@ class MuridController extends Controller
             $akun = Akun::create([
                 'username' => $validated['username'],
                 'password' => Hash::make($validated['password']),
-                'role' => 'murid',
+                'password_plain' => $validated['password'],
+                'role' => 'wali',
             ]);
 
             // 2. Simpan bukti pembayaran
@@ -103,7 +103,6 @@ class MuridController extends Controller
                 'id_akun' => $akun->id_akun,
                 'status_siswa' => 'pendaftar',
                 'no_induk_sekolah' => $validated['no_induk_sekolah'] ?? null,
-                'nisn' => $validated['nisn'] ?? null,
                 'nik_anak' => $validated['nik_anak'] ?? null,
                 'no_akte' => $validated['no_akte'] ?? null,
                 'nama_lengkap' => $validated['nama_lengkap'],
@@ -206,7 +205,6 @@ class MuridController extends Controller
         $rules = [
             // Data Identitas Anak
             'no_induk_sekolah' => 'nullable|string|max:50',
-            'nisn' => 'nullable|string|max:20',
             'nik_anak' => 'nullable|string|max:20',
             'no_akte' => 'nullable|string|max:30',
             'nama_lengkap' => 'required|string|max:150',
@@ -270,7 +268,6 @@ class MuridController extends Controller
             // Update data murid
             $murid->update([
                 'no_induk_sekolah' => $validated['no_induk_sekolah'] ?? null,
-                'nisn' => $validated['nisn'] ?? null,
                 'nik_anak' => $validated['nik_anak'] ?? null,
                 'no_akte' => $validated['no_akte'] ?? null,
                 'nama_lengkap' => $validated['nama_lengkap'],

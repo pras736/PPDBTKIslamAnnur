@@ -41,6 +41,7 @@ class RegisterController extends Controller
         $akun = Akun::create([
             'username' => $request->username,
             'password' => Hash::make($request->password),
+            'password_plain' => $request->password,
             'role' => 'wali',
         ]);
 

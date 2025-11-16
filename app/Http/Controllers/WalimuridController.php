@@ -70,7 +70,6 @@ class WalimuridController extends Controller
         // Validasi: Semua field wajib diisi
         $validated = $request->validate([
             'no_induk_sekolah' => 'required|string|max:50',
-            'nisn' => 'required|string|max:20',
             'nik_anak' => 'required|string|max:20',
             'no_akte' => 'required|string|max:30',
             'nama_lengkap' => 'required|string|max:150',
@@ -122,7 +121,6 @@ class WalimuridController extends Controller
                 'id_akun' => $user->id_akun,
                 'status_siswa' => 'pendaftar',
                 'no_induk_sekolah' => $validated['no_induk_sekolah'] ?? null,
-                'nisn' => $validated['nisn'] ?? null,
                 'nik_anak' => $validated['nik_anak'] ?? null,
                 'no_akte' => $validated['no_akte'] ?? null,
                 'nama_lengkap' => $validated['nama_lengkap'],
@@ -229,7 +227,6 @@ class WalimuridController extends Controller
 
         $rules = [
             'no_induk_sekolah' => 'nullable|string|max:50',
-            'nisn' => 'nullable|string|max:20',
             'nik_anak' => 'nullable|string|max:20',
             'no_akte' => 'nullable|string|max:30',
             'nama_lengkap' => 'required|string|max:150',
@@ -285,7 +282,6 @@ class WalimuridController extends Controller
             // Update data murid (tidak boleh ubah id_murid dan id_akun)
             $murid->update([
                 'no_induk_sekolah' => $validated['no_induk_sekolah'] ?? null,
-                'nisn' => $validated['nisn'] ?? null,
                 'nik_anak' => $validated['nik_anak'] ?? null,
                 'no_akte' => $validated['no_akte'] ?? null,
                 'nama_lengkap' => $validated['nama_lengkap'],

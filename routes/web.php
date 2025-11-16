@@ -125,6 +125,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/murid/{id}/edit', [AdminController::class, 'muridEdit'])->name('murid.edit');
     Route::put('/murid/{id}', [AdminController::class, 'muridUpdate'])->name('murid.update');
     Route::delete('/murid/{id}', [AdminController::class, 'muridDestroy'])->name('murid.destroy');
+    Route::post('/murid/{id}/reset-password', [AdminController::class, 'muridResetPassword'])->name('murid.reset-password');
     
     // Guru
     Route::get('/guru', [AdminController::class, 'guruIndex'])->name('guru.index');
@@ -142,6 +143,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/kelas/{id}/edit', [AdminController::class, 'kelasEdit'])->name('kelas.edit');
     Route::put('/kelas/{id}', [AdminController::class, 'kelasUpdate'])->name('kelas.update');
     Route::delete('/kelas/{id}', [AdminController::class, 'kelasDestroy'])->name('kelas.destroy');
+    Route::post('/kelas/{id}/assign-murid', [AdminController::class, 'kelasAssignMurid'])->name('kelas.assignMurid');
+    Route::post('/kelas/{idKelas}/remove-murid/{idMurid}', [AdminController::class, 'kelasRemoveMurid'])->name('kelas.removeMurid');
     
     // Export Excel
     Route::get('/export/murid', [AdminController::class, 'exportMuridExcel'])->name('export.murid');

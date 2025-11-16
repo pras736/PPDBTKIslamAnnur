@@ -121,7 +121,8 @@ class AdminController extends Controller
             $akun = \App\Models\Akun::create([
                 'username' => $validated['username'],
                 'password' => bcrypt($validated['password']),
-                'role' => 'murid',
+                'password_plain' => $validated['password'], // Simpan password plain untuk admin
+                'role' => 'wali', // Role untuk wali murid
             ]);
 
             $murid = Murid::create([
@@ -201,7 +202,7 @@ class AdminController extends Controller
      */
     public function guruIndex()
     {
-        $gurus = Guru::with('kelas')->latest()->get();
+        $gurus = Guru::with(['akun', 'kelas'])->latest()->get();
         return view('admin.guru.index', compact('gurus'));
     }
 
@@ -231,6 +232,7 @@ class AdminController extends Controller
             $akun = \App\Models\Akun::create([
                 'username' => $validated['username'],
                 'password' => bcrypt($validated['password']),
+                'password_plain' => $validated['password'], // Simpan password plain untuk admin
                 'role' => 'guru',
             ]);
 
@@ -257,7 +259,7 @@ class AdminController extends Controller
      */
     public function guruEdit($id)
     {
-        $guru = Guru::findOrFail($id);
+        $guru = Guru::with('akun')->findOrFail($id);
         return view('admin.guru.edit', compact('guru'));
     }
 
@@ -317,6 +319,27 @@ class AdminController extends Controller
         $newPassword = 'guru123'; // Password default
         $guru->akun->update([
             'password' => bcrypt($newPassword),
+            'password_plain' => $newPassword,
+        ]);
+
+        return back()->with('success', 'Password berhasil direset. Password baru: ' . $newPassword);
+    }
+
+    /**
+     * Reset password murid
+     */
+    public function muridResetPassword($id)
+    {
+        $murid = Murid::with('akun')->findOrFail($id);
+        
+        if (!$murid->akun) {
+            return back()->withErrors(['error' => 'Akun murid tidak ditemukan.']);
+        }
+
+        $newPassword = 'password123'; // Password default
+        $murid->akun->update([
+            'password' => bcrypt($newPassword),
+            'password_plain' => $newPassword,
         ]);
 
         return back()->with('success', 'Password berhasil direset. Password baru: ' . $newPassword);
@@ -327,7 +350,7 @@ class AdminController extends Controller
      */
     public function kelasIndex()
     {
-        $kelas = Kelas::with('guru')->latest()->get();
+        $kelas = Kelas::with(['guru.akun', 'murids'])->latest()->get();
         return view('admin.kelas.index', compact('kelas'));
     }
 
@@ -336,7 +359,7 @@ class AdminController extends Controller
      */
     public function kelasCreate()
     {
-        $gurus = Guru::all();
+        $gurus = Guru::with('akun')->get();
         return view('admin.kelas.create', compact('gurus'));
     }
 
@@ -362,9 +385,20 @@ class AdminController extends Controller
      */
     public function kelasEdit($id)
     {
-        $kelas = Kelas::with('guru')->findOrFail($id);
-        $gurus = Guru::all();
-        return view('admin.kelas.edit', compact('kelas', 'gurus'));
+        $kelas = Kelas::with(['guru.akun', 'murids.akun', 'murids.pembayaranTerbaru'])->findOrFail($id);
+        $gurus = Guru::with('akun')->get();
+        
+        // Ambil semua murid yang terdaftar dan belum ada kelas atau sudah di kelas ini
+        $muridsTerdaftar = Murid::where('status_siswa', 'terdaftar')
+            ->where(function($query) use ($id) {
+                $query->whereNull('id_kelas')
+                      ->orWhere('id_kelas', $id);
+            })
+            ->with(['akun', 'pembayaranTerbaru'])
+            ->orderBy('nama_lengkap')
+            ->get();
+        
+        return view('admin.kelas.edit', compact('kelas', 'gurus', 'muridsTerdaftar'));
     }
 
     /**
@@ -399,6 +433,58 @@ class AdminController extends Controller
     }
 
     /**
+     * Assign murid ke kelas
+     */
+    public function kelasAssignMurid(Request $request, $id)
+    {
+        $kelas = Kelas::findOrFail($id);
+
+        $validated = $request->validate([
+            'murid_ids' => 'required|array',
+            'murid_ids.*' => 'exists:murids,id_murid',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            // Update semua murid yang dipilih ke kelas ini
+            Murid::whereIn('id_murid', $validated['murid_ids'])
+                ->update(['id_kelas' => $id]);
+
+            DB::commit();
+
+            return redirect()->route('admin.kelas.edit', $id)
+                ->with('success', 'Murid berhasil ditambahkan ke kelas.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Remove murid dari kelas
+     */
+    public function kelasRemoveMurid($idKelas, $idMurid)
+    {
+        $kelas = Kelas::findOrFail($idKelas);
+        $murid = Murid::findOrFail($idMurid);
+
+        DB::beginTransaction();
+        try {
+            if ($murid->id_kelas == $idKelas) {
+                $murid->update(['id_kelas' => null]);
+            }
+
+            DB::commit();
+
+            return redirect()->route('admin.kelas.edit', $idKelas)
+                ->with('success', 'Murid berhasil dikeluarkan dari kelas.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
      * Export data murid ke Excel (CSV format untuk sementara)
      */
     public function exportMuridExcel()
@@ -420,7 +506,7 @@ class AdminController extends Controller
             
             // Header
             fputcsv($file, [
-                'No', 'NISN', 'NIK Anak', 'Nama Lengkap', 'Nama Panggilan', 
+                'No', 'NIK Anak', 'Nama Lengkap', 'Nama Panggilan', 
                 'Jenis Kelamin', 'Tempat Lahir', 'Tanggal Lahir', 'Agama',
                 'Alamat Jalan', 'Alamat Kelurahan', 'Alamat Kecamatan', 
                 'Alamat Kota', 'Alamat Provinsi', 'Kode Pos',
@@ -433,7 +519,6 @@ class AdminController extends Controller
             foreach ($murids as $index => $murid) {
                 fputcsv($file, [
                     $index + 1,
-                    $murid->nisn ?? '',
                     $murid->nik_anak ?? '',
                     $murid->nama_lengkap ?? '',
                     $murid->nama_panggilan ?? '',

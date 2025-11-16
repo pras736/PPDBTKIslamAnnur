@@ -76,10 +76,6 @@
                                             <input type="text" class="form-control" id="no_induk_sekolah" name="no_induk_sekolah" value="{{ old('no_induk_sekolah') }}" maxlength="50">
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            <label for="nisn" class="form-label">NISN</label>
-                                            <input type="text" class="form-control" id="nisn" name="nisn" value="{{ old('nisn') }}" maxlength="20">
-                                        </div>
-                                        <div class="col-md-6 mb-3">
                                             <label for="nik_anak" class="form-label">NIK Anak</label>
                                             <input type="text" class="form-control" id="nik_anak" name="nik_anak" value="{{ old('nik_anak') }}" maxlength="20">
                                         </div>

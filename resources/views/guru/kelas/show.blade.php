@@ -39,7 +39,10 @@
                             <tr>
                                 <th>No</th>
                                 <th>Nama Lengkap</th>
+                                <th>Nama Panggilan</th>
                                 <th>Jenis Kelamin</th>
+                                <th>Tanggal Lahir</th>
+                                <th>Status Pembayaran</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
@@ -48,7 +51,22 @@
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
                                     <td>{{ $murid->nama_lengkap }}</td>
+                                    <td>{{ $murid->nama_panggilan ?? '-' }}</td>
                                     <td>{{ $murid->jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan' }}</td>
+                                    <td>{{ $murid->tanggal_lahir ? $murid->tanggal_lahir->format('d-m-Y') : '-' }}</td>
+                                    <td>
+                                        @if($murid->pembayaranTerbaru)
+                                            @if($murid->pembayaranTerbaru->status_pembayaran === 'diverifikasi')
+                                                <span class="badge bg-success">Diverifikasi</span>
+                                            @elseif($murid->pembayaranTerbaru->status_pembayaran === 'ditolak')
+                                                <span class="badge bg-danger">Ditolak</span>
+                                            @else
+                                                <span class="badge bg-warning">Menunggu</span>
+                                            @endif
+                                        @else
+                                            <span class="badge bg-secondary">Belum ada</span>
+                                        @endif
+                                    </td>
                                     <td>
                                         <span class="badge {{ $murid->status_siswa === 'terdaftar' ? 'bg-success' : 'bg-warning' }}">
                                             {{ ucfirst($murid->status_siswa) }}
@@ -57,7 +75,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" class="text-center">Tidak ada murid di kelas ini</td>
+                                    <td colspan="7" class="text-center">Tidak ada murid di kelas ini</td>
                                 </tr>
                             @endforelse
                         </tbody>
