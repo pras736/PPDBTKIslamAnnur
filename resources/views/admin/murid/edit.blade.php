@@ -64,6 +64,16 @@
                     </div>
 
                     <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="nik_anak" class="form-label">NIK Anak</label>
+                            <input type="text" class="form-control @error('nik_anak') is-invalid @enderror" id="nik_anak" name="nik_anak" value="{{ old('nik_anak', $murid->nik_anak) }}" maxlength="20">
+                            @error('nik_anak')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
                         <div class="col-md-4">
                             <label for="jenis_kelamin" class="form-label">Jenis Kelamin <span class="text-danger">*</span></label>
                             <select class="form-select @error('jenis_kelamin') is-invalid @enderror" id="jenis_kelamin" name="jenis_kelamin" required>

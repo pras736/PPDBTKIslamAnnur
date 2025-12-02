@@ -16,6 +16,36 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-body">
+                <form method="GET" class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="status_pembayaran" class="form-label">Filter Status Pembayaran</label>
+                        <select name="status_pembayaran" id="status_pembayaran" class="form-select">
+                            <option value="all" {{ request('status_pembayaran') === 'all' || !request()->has('status_pembayaran') ? 'selected' : '' }}>Semua</option>
+                            <option value="menunggu" {{ request('status_pembayaran') === 'menunggu' ? 'selected' : '' }}>Menunggu</option>
+                            <option value="diverifikasi" {{ request('status_pembayaran') === 'diverifikasi' ? 'selected' : '' }}>Diverifikasi</option>
+                            <option value="ditolak" {{ request('status_pembayaran') === 'ditolak' ? 'selected' : '' }}>Ditolak</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="search" class="form-label">Search</label>
+                        <div class="input-group">
+                            <input
+                                type="text"
+                                name="search"
+                                id="search"
+                                class="form-control"
+                                placeholder="Cari ID pembayaran, ID murid, atau nama murid"
+                                value="{{ request('search') }}">
+                            <button type="submit" class="btn btn-primary">Cari</button>
+                        </div>
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end justify-content-end">
+                        @if(request()->has('status_pembayaran') || request()->filled('search'))
+                            <a href="{{ route('admin.pembayaran.index') }}" class="btn btn-outline-secondary me-2">Reset</a>
+                        @endif
+                    </div>
+                </form>
+
                 <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>
@@ -74,6 +104,12 @@
                             @endforelse
                         </tbody>
                     </table>
+
+                    @if($pembayarans instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                        <div class="d-flex justify-content-center mt-3">
+                            {{ $pembayarans->links('pagination::bootstrap-5') }}
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

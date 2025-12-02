@@ -21,6 +21,23 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-body">
+                <form method="GET" class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="status_wali" class="form-label">Filter Status Wali Kelas</label>
+                        <select name="status_wali" id="status_wali" class="form-select">
+                            <option value="all" {{ request('status_wali') === 'all' || !request()->has('status_wali') ? 'selected' : '' }}>Semua</option>
+                            <option value="sudah" {{ request('status_wali') === 'sudah' ? 'selected' : '' }}>Sudah punya wali kelas</option>
+                            <option value="belum" {{ request('status_wali') === 'belum' ? 'selected' : '' }}>Belum punya wali kelas</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary me-2">Terapkan</button>
+                        @if(request()->has('status_wali') && request('status_wali') !== 'all')
+                            <a href="{{ route('admin.kelas.index') }}" class="btn btn-outline-secondary">Reset</a>
+                        @endif
+                    </div>
+                </form>
+
                 <div class="table-responsive">
                     <table class="table table-striped table-hover">
                         <thead>
@@ -34,9 +51,15 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($kelas as $index => $kelasItem)
+                            @forelse($kelas as $kelasItem)
                                 <tr>
-                                    <td>{{ $index + 1 }}</td>
+                                    <td>
+                                        @if($kelas instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                                            {{ $kelas->firstItem() + $loop->index }}
+                                        @else
+                                            {{ $loop->iteration }}
+                                        @endif
+                                    </td>
                                     <td>{{ $kelasItem->nama_kelas }}</td>
                                     <td>{{ $kelasItem->nama_guru ?? '-' }}</td>
                                     <td>
@@ -69,6 +92,12 @@
                             @endforelse
                         </tbody>
                     </table>
+
+                    @if($kelas instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                        <div class="d-flex justify-content-center mt-3">
+                            {{ $kelas->links('pagination::bootstrap-5') }}
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

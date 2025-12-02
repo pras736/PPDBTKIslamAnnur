@@ -109,7 +109,7 @@
       {{-- ============================================ --}}
       {{-- HALAMAN UNTUK USER YANG SUDAH LOGIN --}}
       {{-- ============================================ --}}
-      
+
       @if(Auth::user()->role == 'admin')
         {{-- Dashboard Admin --}}
         <main class="py-5">
@@ -123,9 +123,9 @@
                   <div class="card-body">
                     <p class="lead">Selamat datang, <strong>{{ Auth::user()->username }}</strong>!</p>
                     <p>Anda login sebagai <span class="badge bg-danger">Administrator</span></p>
-                    
+
                     <hr>
-                    
+
                     <h3 class="h5 mb-3">Menu Admin</h3>
                     <div class="row g-3">
                       <div class="col-md-6 col-lg-4">
@@ -203,9 +203,9 @@
                   <div class="card-body">
                     <p class="lead">Selamat datang, <strong>{{ Auth::user()->username }}</strong>!</p>
                     <p>Anda login sebagai <span class="badge bg-info">Guru</span></p>
-                    
+
                     <hr>
-                    
+
                     <h3 class="h5 mb-3">Menu Guru</h3>
                     <div class="row g-3">
                       <div class="col-md-6">
@@ -247,9 +247,9 @@
                   <div class="card-body">
                     <p class="lead">Selamat datang, <strong>{{ Auth::user()->username }}</strong>!</p>
                     <p>Anda login sebagai <span class="badge bg-warning">Wali Murid</span></p>
-                    
+
                     <hr>
-                    
+
                     <h3 class="h5 mb-3">Menu Wali Murid</h3>
                     <div class="row g-3">
                       <div class="col-md-6 col-lg-4">
@@ -301,7 +301,7 @@
       {{-- ============================================ --}}
       {{-- HALAMAN UNTUK PENGUNJUNG BELUM LOGIN --}}
       {{-- ============================================ --}}
-      
+
       <header id="beranda" class="hero py-5 py-lg-6">
         <div class="container">
           <div class="row align-items-center gy-4">
@@ -461,30 +461,6 @@
               </section>
             </div>
           </div>
-
-          <section id="guru" class="mt-5">
-            <h2 class="h4 mb-3">Guru Kami</h2>
-            <div class="row g-3">
-              <div class="col-sm-6 col-lg-3">
-                <div class="card h-100 shadow-soft">
-                  <div class="card-body text-center">
-                    <img src="/placeholder.svg?height=120&width=120" alt="Foto Guru" class="rounded-circle mb-2" width="120" height="120" />
-                    <div class="fw-semibold">Bu Aisyah</div>
-                    <div class="small text-secondary">Wali Kelas A</div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-sm-6 col-lg-3">
-                <div class="card h-100 shadow-soft">
-                  <div class="card-body text-center">
-                    <img src="/placeholder.svg?height=120&width=120" alt="Foto Guru" class="rounded-circle mb-2" width="120" height="120" />
-                    <div class="fw-semibold">Bu Fatimah</div>
-                    <div class="small text-secondary">Wali Kelas B</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
 
           <section id="kontak" class="mt-5">
             <h2 class="h4 mb-3">Kontak</h2>

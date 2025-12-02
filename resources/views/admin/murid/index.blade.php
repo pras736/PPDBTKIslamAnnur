@@ -24,6 +24,35 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-body">
+                <form method="GET" class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="jenis_kelamin" class="form-label">Filter Jenis Kelamin</label>
+                        <select name="jenis_kelamin" id="jenis_kelamin" class="form-select">
+                            <option value="all" {{ request('jenis_kelamin') === 'all' || !request()->has('jenis_kelamin') ? 'selected' : '' }}>Semua</option>
+                            <option value="L" {{ request('jenis_kelamin') === 'L' ? 'selected' : '' }}>Laki-laki</option>
+                            <option value="P" {{ request('jenis_kelamin') === 'P' ? 'selected' : '' }}>Perempuan</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="search" class="form-label">Search</label>
+                        <div class="input-group">
+                            <input
+                                type="text"
+                                name="search"
+                                id="search"
+                                class="form-control"
+                                placeholder="Cari nama, NIK, atau username"
+                                value="{{ request('search') }}">
+                            <button type="submit" class="btn btn-primary">Cari</button>
+                        </div>
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end justify-content-end">
+                        @if(request()->has('jenis_kelamin') || request()->filled('search'))
+                            <a href="{{ route('admin.murid.index') }}" class="btn btn-outline-secondary me-2">Reset</a>
+                        @endif
+                    </div>
+                </form>
+
                 <div class="table-responsive">
                     <table class="table table-striped table-hover">
                         <thead>
@@ -39,9 +68,15 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($murids as $index => $murid)
+                            @forelse($murids as $murid)
                                 <tr>
-                                    <td>{{ $index + 1 }}</td>
+                                    <td>
+                                        @if($murids instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                                            {{ $murids->firstItem() + $loop->index }}
+                                        @else
+                                            {{ $loop->iteration }}
+                                        @endif
+                                    </td>
                                     <td>{{ $murid->nama_lengkap }}</td>
                                     <td>{{ $murid->jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan' }}</td>
                                     <td>
@@ -107,6 +142,12 @@
                             @endforelse
                         </tbody>
                     </table>
+
+                    @if($murids instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                        <div class="d-flex justify-content-center mt-3">
+                            {{ $murids->links('pagination::bootstrap-5') }}
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

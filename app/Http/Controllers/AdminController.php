@@ -29,9 +29,29 @@ class AdminController extends Controller
     /**
      * List semua pembayaran
      */
-    public function pembayaranIndex()
+    public function pembayaranIndex(Request $request)
     {
-        $pembayarans = Pembayaran::with('murid')->latest()->get();
+        $query = Pembayaran::with('murid')->latest();
+
+        // Filter berdasarkan status pembayaran (menunggu/diverifikasi/ditolak)
+        if ($request->filled('status_pembayaran') && $request->status_pembayaran !== 'all') {
+            $query->where('status_pembayaran', $request->status_pembayaran);
+        }
+
+        // Search pembayaran (berdasarkan ID pembayaran, ID murid, atau nama murid)
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('id_pembayaran', 'LIKE', '%' . $search . '%')
+                  ->orWhere('id_murid', 'LIKE', '%' . $search . '%')
+                  ->orWhereHas('murid', function ($qm) use ($search) {
+                      $qm->where('nama_lengkap', 'LIKE', '%' . $search . '%');
+                  });
+            });
+        }
+
+        $pembayarans = $query->paginate(10)->withQueryString();
+
         return view('admin.pembayaran.index', compact('pembayarans'));
     }
 
@@ -78,9 +98,29 @@ class AdminController extends Controller
     /**
      * List semua murid
      */
-    public function muridIndex()
+    public function muridIndex(Request $request)
     {
-        $murids = Murid::with(['akun', 'pembayaranTerbaru'])->latest()->get();
+        $query = Murid::with(['akun', 'pembayaranTerbaru'])->latest();
+
+        // Filter berdasarkan jenis kelamin (L/P)
+        if ($request->filled('jenis_kelamin') && $request->jenis_kelamin !== 'all') {
+            $query->where('jenis_kelamin', $request->jenis_kelamin);
+        }
+
+        // Search murid (nama, NIK, atau username akun)
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_lengkap', 'LIKE', '%' . $search . '%')
+                  ->orWhere('nik_anak', 'LIKE', '%' . $search . '%')
+                  ->orWhereHas('akun', function ($qa) use ($search) {
+                      $qa->where('username', 'LIKE', '%' . $search . '%');
+                  });
+            });
+        }
+
+        $murids = $query->paginate(10)->withQueryString();
+
         return view('admin.murid.index', compact('murids'));
     }
 
@@ -111,6 +151,7 @@ class AdminController extends Controller
             'password' => 'required|string|min:8|confirmed',
             'status_siswa' => 'required|in:pendaftar,terdaftar',
             'nama_lengkap' => 'required|string|max:150',
+            'nik_anak' => 'nullable|string|max:20',
             'jenis_kelamin' => 'required|in:L,P',
             'tempat_lahir' => 'required|string|max:100',
             'tanggal_lahir' => 'required|date',
@@ -129,6 +170,7 @@ class AdminController extends Controller
                 'id_akun' => $akun->id_akun,
                 'status_siswa' => $validated['status_siswa'],
                 'nama_lengkap' => $validated['nama_lengkap'],
+                'nik_anak' => $validated['nik_anak'] ?? null,
                 'jenis_kelamin' => $validated['jenis_kelamin'],
                 'tempat_lahir' => $validated['tempat_lahir'],
                 'tanggal_lahir' => $validated['tanggal_lahir'],
@@ -164,6 +206,7 @@ class AdminController extends Controller
         $validated = $request->validate([
             'status_siswa' => 'required|in:pendaftar,terdaftar',
             'nama_lengkap' => 'required|string|max:150',
+            'nik_anak' => 'nullable|string|max:20',
             'jenis_kelamin' => 'required|in:L,P',
             'tempat_lahir' => 'required|string|max:100',
             'tanggal_lahir' => 'required|date',
@@ -200,9 +243,35 @@ class AdminController extends Controller
     /**
      * List semua guru
      */
-    public function guruIndex()
+    public function guruIndex(Request $request)
     {
-        $gurus = Guru::with(['akun', 'kelas'])->latest()->get();
+        $query = Guru::with(['akun', 'kelas'])->latest();
+
+        // Filter berdasarkan apakah guru sudah di-assign ke kelas atau belum
+        if ($request->filled('status_kelas') && $request->status_kelas !== 'all') {
+            if ($request->status_kelas === 'sudah') {
+                // Guru yang sudah menjadi wali kelas (punya relasi kelas)
+                $query->whereHas('kelas');
+            } elseif ($request->status_kelas === 'belum') {
+                // Guru yang belum menjadi wali kelas
+                $query->whereDoesntHave('kelas');
+            }
+        }
+
+        // Search guru (NIP, username, atau nama kelas teks)
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('NIP', 'LIKE', '%' . $search . '%')
+                  ->orWhere('kelas', 'LIKE', '%' . $search . '%')
+                  ->orWhereHas('akun', function ($qa) use ($search) {
+                      $qa->where('username', 'LIKE', '%' . $search . '%');
+                  });
+            });
+        }
+
+        $gurus = $query->paginate(10)->withQueryString();
+
         return view('admin.guru.index', compact('gurus'));
     }
 
@@ -348,9 +417,21 @@ class AdminController extends Controller
     /**
      * List semua kelas
      */
-    public function kelasIndex()
+    public function kelasIndex(Request $request)
     {
-        $kelas = Kelas::with(['guru.akun', 'murids'])->latest()->get();
+        $query = Kelas::with(['guru.akun', 'murids'])->latest();
+
+        // Filter kelas berdasarkan apakah sudah memiliki wali kelas atau belum
+        if ($request->filled('status_wali') && $request->status_wali !== 'all') {
+            if ($request->status_wali === 'sudah') {
+                $query->whereNotNull('id_guru');
+            } elseif ($request->status_wali === 'belum') {
+                $query->whereNull('id_guru');
+            }
+        }
+
+        $kelas = $query->paginate(10)->withQueryString();
+
         return view('admin.kelas.index', compact('kelas'));
     }
 

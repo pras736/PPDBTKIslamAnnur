@@ -40,8 +40,8 @@
                         <td>: {{ $murid->nama_panggilan ?? '-' }}</td>
                     </tr>
                     <tr>
-                        <th>No Induk Sekolah</th>
-                        <td>: {{ $murid->no_induk_sekolah ?? '-' }}</td>
+                        <th>NIK Anak</th>
+                        <td>: {{ $murid->nik_anak ?? '-' }}</td>
                     </tr>
                     <tr>
                         <th>Jenis Kelamin</th>

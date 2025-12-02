@@ -21,6 +21,35 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-body">
+                <form method="GET" class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="status_kelas" class="form-label">Filter Status Wali Kelas</label>
+                        <select name="status_kelas" id="status_kelas" class="form-select">
+                            <option value="all" {{ request('status_kelas') === 'all' || !request()->has('status_kelas') ? 'selected' : '' }}>Semua</option>
+                            <option value="sudah" {{ request('status_kelas') === 'sudah' ? 'selected' : '' }}>Sudah di-assign kelas</option>
+                            <option value="belum" {{ request('status_kelas') === 'belum' ? 'selected' : '' }}>Belum di-assign kelas</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="search" class="form-label">Search</label>
+                        <div class="input-group">
+                            <input
+                                type="text"
+                                name="search"
+                                id="search"
+                                class="form-control"
+                                placeholder="Cari NIP, username, atau nama kelas teks"
+                                value="{{ request('search') }}">
+                            <button type="submit" class="btn btn-primary">Cari</button>
+                        </div>
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end justify-content-end">
+                        @if(request()->has('status_kelas') || request()->filled('search'))
+                            <a href="{{ route('admin.guru.index') }}" class="btn btn-outline-secondary me-2">Reset</a>
+                        @endif
+                    </div>
+                </form>
+
                 <div class="table-responsive">
                     <table class="table table-striped table-hover">
                         <thead>
@@ -35,9 +64,15 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($gurus as $index => $guru)
+                            @forelse($gurus as $guru)
                                 <tr>
-                                    <td>{{ $index + 1 }}</td>
+                                    <td>
+                                        @if($gurus instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                                            {{ $gurus->firstItem() + $loop->index }}
+                                        @else
+                                            {{ $loop->iteration }}
+                                        @endif
+                                    </td>
                                     <td>{{ $guru->NIP }}</td>
                                     <td>
                                         <strong>{{ $guru->akun->username ?? '-' }}</strong>
@@ -87,6 +122,12 @@
                             @endforelse
                         </tbody>
                     </table>
+
+                    @if($gurus instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                        <div class="d-flex justify-content-center mt-3">
+                            {{ $gurus->links('pagination::bootstrap-5') }}
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

@@ -15,7 +15,6 @@ class Murid extends Model
         'id_akun',
         'id_kelas',
         'status_siswa',
-        'no_induk_sekolah',
         'nik_anak',
         'no_akte',
         'nama_lengkap',

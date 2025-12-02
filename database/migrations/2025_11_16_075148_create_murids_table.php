@@ -17,8 +17,6 @@ return new class extends Migration
             $table->enum('status_siswa', ['pendaftar', 'terdaftar'])->default('pendaftar');
             
             // Data Identitas Anak
-            $table->string('no_induk_sekolah', 50)->nullable();
-            $table->string('nisn', 20)->nullable();
             $table->string('nik_anak', 20)->nullable();
             $table->string('no_akte', 30)->nullable();
             $table->string('nama_lengkap', 150);
