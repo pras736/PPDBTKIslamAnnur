@@ -15,6 +15,7 @@ class AdminController extends Controller
 {
     /**
      * Dashboard Admin
+     * Fitur: menampilkan ringkasan statistik (total murid, pendaftar, terdaftar, dan pembayaran yang masih menunggu).
      */
     public function dashboard()
     {
@@ -27,7 +28,8 @@ class AdminController extends Controller
     }
 
     /**
-     * List semua pembayaran
+     * List semua pembayaran.
+     * Fitur: halaman manajemen bukti pembayaran untuk admin (pagination + filter status + search).
      */
     public function pembayaranIndex(Request $request)
     {
@@ -56,7 +58,8 @@ class AdminController extends Controller
     }
 
     /**
-     * Verifikasi pembayaran
+     * Verifikasi pembayaran.
+     * Fitur: mengubah status pembayaran menjadi "diverifikasi" dan otomatis mengubah status siswa menjadi "terdaftar".
      */
     public function verifikasiPembayaran($id)
     {
@@ -82,7 +85,8 @@ class AdminController extends Controller
     }
 
     /**
-     * Tolak pembayaran
+     * Tolak pembayaran.
+     * Fitur: mengubah status pembayaran menjadi "ditolak" sehingga wali murid dapat upload ulang bukti pembayaran.
      */
     public function tolakPembayaran($id)
     {
@@ -96,7 +100,8 @@ class AdminController extends Controller
     }
 
     /**
-     * List semua murid
+     * List semua murid.
+     * Fitur: halaman manajemen murid untuk admin (pagination + filter jenis kelamin + search nama/NIK/username).
      */
     public function muridIndex(Request $request)
     {
@@ -125,7 +130,8 @@ class AdminController extends Controller
     }
 
     /**
-     * Detail murid
+     * Detail murid.
+     * Fitur: menampilkan profil lengkap murid beserta riwayat pembayaran.
      */
     public function muridShow($id)
     {
@@ -134,7 +140,8 @@ class AdminController extends Controller
     }
 
     /**
-     * Form create murid
+     * Form create murid.
+     * Fitur: halaman admin untuk menambahkan murid baru sekaligus membuat akun wali.
      */
     public function muridCreate()
     {
@@ -142,7 +149,8 @@ class AdminController extends Controller
     }
 
     /**
-     * Store murid baru
+     * Store murid baru.
+     * Fitur: menyimpan data murid baru dan akun walinya ke database.
      */
     public function muridStore(Request $request)
     {
@@ -188,7 +196,8 @@ class AdminController extends Controller
     }
 
     /**
-     * Form edit murid
+     * Form edit murid.
+     * Fitur: halaman admin untuk mengubah data murid yang sudah terdaftar.
      */
     public function muridEdit($id)
     {
@@ -197,7 +206,8 @@ class AdminController extends Controller
     }
 
     /**
-     * Update murid
+     * Update murid.
+     * Fitur: menyimpan perubahan data murid dari form edit.
      */
     public function muridUpdate(Request $request, $id)
     {
@@ -219,7 +229,8 @@ class AdminController extends Controller
     }
 
     /**
-     * Delete murid
+     * Delete murid.
+     * Fitur: menghapus data murid sekaligus akun walinya dari sistem.
      */
     public function muridDestroy($id)
     {
@@ -241,7 +252,8 @@ class AdminController extends Controller
     }
 
     /**
-     * List semua guru
+     * List semua guru.
+     * Fitur: halaman manajemen guru untuk admin (pagination + filter status wali kelas + search NIP/username/nama kelas teks).
      */
     public function guruIndex(Request $request)
     {
@@ -276,7 +288,8 @@ class AdminController extends Controller
     }
 
     /**
-     * Form create guru
+     * Form create guru.
+     * Fitur: halaman admin untuk menambahkan akun guru baru.
      */
     public function guruCreate()
     {
@@ -284,7 +297,8 @@ class AdminController extends Controller
     }
 
     /**
-     * Store guru baru (dengan akun)
+     * Store guru baru (dengan akun).
+     * Fitur: menyimpan data guru baru dan akun login gurunya.
      */
     public function guruStore(Request $request)
     {
@@ -324,7 +338,8 @@ class AdminController extends Controller
     }
 
     /**
-     * Form edit guru
+     * Form edit guru.
+     * Fitur: halaman admin untuk mengubah data guru.
      */
     public function guruEdit($id)
     {
@@ -333,7 +348,8 @@ class AdminController extends Controller
     }
 
     /**
-     * Update guru
+     * Update guru.
+     * Fitur: menyimpan perubahan data guru dari form edit.
      */
     public function guruUpdate(Request $request, $id)
     {
@@ -351,7 +367,8 @@ class AdminController extends Controller
     }
 
     /**
-     * Delete guru
+     * Delete guru.
+     * Fitur: menghapus data guru dan akunnya dari sistem.
      */
     public function guruDestroy($id)
     {
@@ -375,7 +392,8 @@ class AdminController extends Controller
     }
 
     /**
-     * Reset password guru
+     * Reset password guru.
+     * Fitur: mengatur ulang password akun guru ke nilai default "guru123".
      */
     public function guruResetPassword($id)
     {
@@ -395,7 +413,8 @@ class AdminController extends Controller
     }
 
     /**
-     * Reset password murid
+     * Reset password murid.
+     * Fitur: mengatur ulang password akun wali/murid ke nilai default "password123".
      */
     public function muridResetPassword($id)
     {
@@ -415,7 +434,8 @@ class AdminController extends Controller
     }
 
     /**
-     * List semua kelas
+     * List semua kelas.
+     * Fitur: halaman manajemen kelas untuk admin (pagination + filter kelas yang sudah/belum punya wali).
      */
     public function kelasIndex(Request $request)
     {
@@ -436,7 +456,8 @@ class AdminController extends Controller
     }
 
     /**
-     * Form create kelas
+     * Form create kelas.
+     * Fitur: halaman admin untuk membuat kelas baru dan memilih wali kelas (opsional).
      */
     public function kelasCreate()
     {
@@ -445,7 +466,8 @@ class AdminController extends Controller
     }
 
     /**
-     * Store kelas baru
+     * Store kelas baru.
+     * Fitur: menyimpan data kelas baru yang dibuat admin.
      */
     public function kelasStore(Request $request)
     {
@@ -462,7 +484,8 @@ class AdminController extends Controller
     }
 
     /**
-     * Form edit kelas
+     * Form edit kelas.
+     * Fitur: halaman admin untuk mengubah informasi kelas dan mengelola murid yang ada di kelas tersebut.
      */
     public function kelasEdit($id)
     {
@@ -483,7 +506,8 @@ class AdminController extends Controller
     }
 
     /**
-     * Update kelas
+     * Update kelas.
+     * Fitur: menyimpan perubahan data kelas dari form edit.
      */
     public function kelasUpdate(Request $request, $id)
     {
@@ -502,7 +526,8 @@ class AdminController extends Controller
     }
 
     /**
-     * Delete kelas
+     * Delete kelas.
+     * Fitur: menghapus kelas dari sistem (tanpa menghapus murid).
      */
     public function kelasDestroy($id)
     {
@@ -514,7 +539,8 @@ class AdminController extends Controller
     }
 
     /**
-     * Assign murid ke kelas
+     * Assign murid ke kelas.
+     * Fitur: menambahkan satu atau banyak murid ke kelas tertentu (set kolom id_kelas di tabel murids).
      */
     public function kelasAssignMurid(Request $request, $id)
     {
@@ -542,7 +568,8 @@ class AdminController extends Controller
     }
 
     /**
-     * Remove murid dari kelas
+     * Remove murid dari kelas.
+     * Fitur: mengeluarkan murid dari kelas dengan mengosongkan kolom id_kelas.
      */
     public function kelasRemoveMurid($idKelas, $idMurid)
     {
@@ -566,7 +593,8 @@ class AdminController extends Controller
     }
 
     /**
-     * Export data murid ke Excel (CSV format untuk sementara)
+     * Export data murid ke Excel (CSV format untuk sementara).
+     * Fitur: mengunduh seluruh data murid beserta status pembayaran terakhir dalam bentuk file CSV untuk admin.
      */
     public function exportMuridExcel()
     {

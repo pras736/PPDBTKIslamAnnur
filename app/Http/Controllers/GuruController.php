@@ -12,6 +12,7 @@ class GuruController extends Controller
 {
     /**
      * Dashboard Guru
+     * Fitur: menampilkan daftar kelas yang diajar guru yang sedang login beserta ringkasan muridnya.
      */
     public function dashboard()
     {
@@ -33,6 +34,7 @@ class GuruController extends Controller
 
     /**
      * Lihat detail kelas dengan murid-muridnya
+     * Fitur: halaman detail satu kelas (wali kelas/guru yang login) lengkap dengan daftar murid dan status pembayaran mereka.
      */
     public function kelasShow($id)
     {

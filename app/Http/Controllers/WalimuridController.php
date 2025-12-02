@@ -13,6 +13,7 @@ class WalimuridController extends Controller
 {
     /**
      * Display the wali murid dashboard.
+     * Fitur: menampilkan ringkasan data murid dan status pembayaran untuk user dengan role "wali".
      */
     public function index(Request $request)
     {
@@ -29,7 +30,8 @@ class WalimuridController extends Controller
     }
 
     /**
-     * Form pendaftaran murid baru
+     * Form pendaftaran murid baru.
+     * Fitur: halaman untuk wali murid mengisi form pendaftaran anak (jika belum pernah daftar).
      */
     public function create()
     {
@@ -50,7 +52,8 @@ class WalimuridController extends Controller
     }
 
     /**
-     * Simpan data pendaftaran murid baru
+     * Simpan data pendaftaran murid baru.
+     * Fitur: menyimpan data anak pertama kali + membuat record pembayaran dengan status "menunggu".
      */
     public function store(Request $request)
     {
@@ -183,7 +186,8 @@ class WalimuridController extends Controller
     }
 
     /**
-     * Form edit data murid
+     * Form edit data murid.
+     * Fitur: halaman untuk wali murid mengubah data anak + kondisi boleh upload ulang bukti pembayaran jika sebelumnya ditolak.
      */
     public function edit()
     {
@@ -205,7 +209,8 @@ class WalimuridController extends Controller
     }
 
     /**
-     * Update data murid
+     * Update data murid.
+     * Fitur: menyimpan perubahan data profil murid dan (jika perlu) upload ulang bukti pembayaran dengan mengubah status ke "menunggu" lagi.
      */
     public function update(Request $request)
     {
