@@ -35,4 +35,20 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Google OAuth Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Konfigurasi untuk Laravel Socialite dengan Google OAuth.
+    | Client ID dan Client Secret didapat dari Google Cloud Console.
+    | Redirect URL harus sesuai dengan yang didaftarkan di Google Cloud Console.
+    |
+    */
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_REDIRECT_URL', 'http://127.0.0.1:8000/auth/google/callback'),
+    ],
+
 ];

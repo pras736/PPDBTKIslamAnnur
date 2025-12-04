@@ -8,6 +8,7 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\WalimuridController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\GuruController;
+use App\Http\Controllers\AuthController;
 
 // ============================================
 // PUBLIC ROUTES (Tanpa Login)
@@ -33,6 +34,10 @@ Route::get('/home',[HomeController::class, 'index'])->name('home.index');
 // Registrasi akun wali murid (public)
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register'])->name('register.post');
+
+// Google OAuth Routes (public)
+Route::get('/auth/google', [AuthController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
 
 // Login form (GET)
 Route::get('/login', function () {
