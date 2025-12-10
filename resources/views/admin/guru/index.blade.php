@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.adminlte')
 
 @section('title', 'Manajemen Guru')
 
@@ -88,9 +88,17 @@
                                             <span class="text-muted">-</span>
                                         @endif
                                     </td>
-                                    <td>{{ $guru->kelas ?? '-' }}</td>
                                     <td>
-                                        @if($guru->kelas)
+                                        @if($guru->assignedKelas)
+                                            <span class="badge bg-primary">{{ $guru->assignedKelas->nama_kelas }}</span>
+                                        @elseif($guru->kelas)
+                                            <span class="badge bg-secondary">{{ $guru->kelas }}</span>
+                                        @else
+                                            <span class="text-muted">-</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($guru->assignedKelas)
                                             <span class="badge bg-success">Ya</span>
                                         @else
                                             <span class="badge bg-secondary">Tidak</span>

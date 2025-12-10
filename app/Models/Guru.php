@@ -23,8 +23,14 @@ class Guru extends Model
         return $this->belongsTo(Akun::class, 'id_akun', 'id_akun');
     }
 
-    // Relasi 1:1 dengan Kelas
+    // Relasi 1:1 dengan Kelas (alias lama, tetap dipertahankan)
     public function kelas()
+    {
+        return $this->hasOne(Kelas::class, 'id_guru', 'id_guru');
+    }
+
+    // Relasi 1:1 dengan Kelas (nama jelas untuk tampilan)
+    public function assignedKelas()
     {
         return $this->hasOne(Kelas::class, 'id_guru', 'id_guru');
     }

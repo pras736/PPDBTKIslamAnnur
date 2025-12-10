@@ -35,22 +35,21 @@
 
                 <div class="flex items-center gap-6">
                     <div class="hidden lg:flex items-center gap-8">
-                        <a href="#" class="text-gray-700 hover:text-green-600 font-medium transition-colors relative group">
-                            Home
+                        <a href="#content" class="text-gray-700 hover:text-green-600 font-medium transition-colors relative group">
+                            Dashboard
                             <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-green-600 group-hover:w-full transition-all duration-300"></span>
                         </a>
-                        <a href="#" class="text-gray-700 hover:text-green-600 font-medium transition-colors relative group">
-                            Kegiatan
-                            <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-green-600 group-hover:w-full transition-all duration-300"></span>
-                        </a>
-                        <a href="#" class="text-gray-700 hover:text-green-600 font-medium transition-colors relative group">
-                            Jadwal
-                            <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-green-600 group-hover:w-full transition-all duration-300"></span>
-                        </a>
-                        <a href="#" class="text-gray-700 hover:text-green-600 font-medium transition-colors relative group">
-                            Kontak
-                            <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-green-600 group-hover:w-full transition-all duration-300"></span>
-                        </a>
+                        @if($murid)
+                            <a href="{{ route('walimurid.edit') }}" class="text-gray-700 hover:text-green-600 font-medium transition-colors relative group">
+                                Edit Data
+                                <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-green-600 group-hover:w-full transition-all duration-300"></span>
+                            </a>
+                        @else
+                            <a href="{{ route('walimurid.create') }}" class="text-gray-700 hover:text-green-600 font-medium transition-colors relative group">
+                                Formulir
+                                <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-green-600 group-hover:w-full transition-all duration-300"></span>
+                            </a>
+                        @endif
                     </div>
 
                     <form method="POST" action="{{ route('logout') }}">
@@ -108,14 +107,6 @@
                     </a>
                 </div>
 
-                <!-- Play Button -->
-                <div class="pt-4 animate-fade-in" style="animation-delay: 0.8s;">
-                    <button class="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center mx-auto hover:scale-105 transition-transform duration-300 shadow-2xl shadow-yellow-400/50">
-                        <svg class="w-5 h-5 text-blue-900 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M8 5v14l11-7z"/>
-                        </svg>
-                    </button>
-                </div>
             </div>
         </div>
     </section>
@@ -162,33 +153,44 @@
 
                             @if($murid)
                                 <!-- Data Murid -->
-                                <div class="space-y-4">
-                                    <div>
-                                        <p class="text-sm text-gray-500">Nama Lengkap</p>
-                                        <p class="text-lg font-semibold text-gray-900">{{ $murid->nama_lengkap }}</p>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="flex flex-col gap-1">
+                                        <span class="text-sm text-gray-500">Nama Lengkap</span>
+                                        <span class="font-semibold text-gray-900">{{ $murid->nama_lengkap }}</span>
                                     </div>
-                                    <div>
-                                        <p class="text-sm text-gray-500">Status Siswa</p>
-                                        <p class="text-lg font-semibold">
-                                            <span class="px-3 py-1 rounded-full {{ $murid->status_siswa === 'terdaftar' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
-                                                {{ ucfirst($murid->status_siswa) }}
+                                    <div class="flex flex-col gap-1">
+                                        <span class="text-sm text-gray-500">Nama Panggilan</span>
+                                        <span class="font-semibold text-gray-900">{{ $murid->nama_panggilan ?? '-' }}</span>
+                                    </div>
+                                    <div class="flex flex-col gap-1">
+                                        <span class="text-sm text-gray-500">Jenis Kelamin</span>
+                                        <span class="font-semibold text-gray-900">{{ $murid->jenis_kelamin === 'L' ? 'Laki-laki' : ($murid->jenis_kelamin === 'P' ? 'Perempuan' : '-') }}</span>
+                                    </div>
+                                    <div class="flex flex-col gap-1">
+                                        <span class="text-sm text-gray-500">Tanggal Lahir</span>
+                                        <span class="font-semibold text-gray-900">{{ $murid->tanggal_lahir ? $murid->tanggal_lahir->format('d-m-Y') : '-' }}</span>
+                                    </div>
+                                    <div class="flex flex-col gap-1">
+                                        <span class="text-sm text-gray-500">Status Siswa</span>
+                                        <span class="inline-flex px-3 py-1 rounded-full {{ $murid->status_siswa === 'terdaftar' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
+                                            {{ ucfirst($murid->status_siswa) }}
+                                        </span>
+                                    </div>
+                                    <div class="flex flex-col gap-1">
+                                        <span class="text-sm text-gray-500">Status Pembayaran</span>
+                                        @if($murid->pembayaranTerbaru)
+                                            @php $status = $murid->pembayaranTerbaru->status_pembayaran; @endphp
+                                            <span class="inline-flex px-3 py-1 rounded-full
+                                                @if($status === 'diverifikasi') bg-green-100 text-green-800
+                                                @elseif($status === 'ditolak') bg-red-100 text-red-800
+                                                @else bg-yellow-100 text-yellow-800
+                                                @endif">
+                                                {{ ucfirst($status) }}
                                             </span>
-                                        </p>
+                                        @else
+                                            <span class="inline-flex px-3 py-1 rounded-full bg-gray-100 text-gray-600">Belum ada</span>
+                                        @endif
                                     </div>
-                                    @if($murid->pembayaranTerbaru)
-                                        <div>
-                                            <p class="text-sm text-gray-500">Status Pembayaran</p>
-                                            <p class="text-lg font-semibold">
-                                                @if($murid->pembayaranTerbaru->status_pembayaran === 'diverifikasi')
-                                                    <span class="px-3 py-1 rounded-full bg-green-100 text-green-800">Diverifikasi</span>
-                                                @elseif($murid->pembayaranTerbaru->status_pembayaran === 'ditolak')
-                                                    <span class="px-3 py-1 rounded-full bg-red-100 text-red-800">Ditolak</span>
-                                                @else
-                                                    <span class="px-3 py-1 rounded-full bg-yellow-100 text-yellow-800">Menunggu</span>
-                                                @endif
-                                            </p>
-                                        </div>
-                                    @endif
                                 </div>
 
                                 <div class="pt-6">

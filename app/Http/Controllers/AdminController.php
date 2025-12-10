@@ -257,16 +257,16 @@ class AdminController extends Controller
      */
     public function guruIndex(Request $request)
     {
-        $query = Guru::with(['akun', 'kelas'])->latest();
+        $query = Guru::with(['akun', 'assignedKelas'])->latest();
 
         // Filter berdasarkan apakah guru sudah di-assign ke kelas atau belum
         if ($request->filled('status_kelas') && $request->status_kelas !== 'all') {
             if ($request->status_kelas === 'sudah') {
                 // Guru yang sudah menjadi wali kelas (punya relasi kelas)
-                $query->whereHas('kelas');
+                $query->whereHas('assignedKelas');
             } elseif ($request->status_kelas === 'belum') {
                 // Guru yang belum menjadi wali kelas
-                $query->whereDoesntHave('kelas');
+                $query->whereDoesntHave('assignedKelas');
             }
         }
 
@@ -276,6 +276,9 @@ class AdminController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('NIP', 'LIKE', '%' . $search . '%')
                   ->orWhere('kelas', 'LIKE', '%' . $search . '%')
+                  ->orWhereHas('assignedKelas', function ($qb) use ($search) {
+                      $qb->where('nama_kelas', 'LIKE', '%' . $search . '%');
+                  })
                   ->orWhereHas('akun', function ($qa) use ($search) {
                       $qa->where('username', 'LIKE', '%' . $search . '%');
                   });

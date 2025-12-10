@@ -466,27 +466,6 @@
             <h2 class="h4 mb-3">Kontak</h2>
             <div class="row g-4">
               <div class="col-lg-6">
-                <div class="card border-0 shadow-soft">
-                  <div class="card-body">
-                    <form>
-                      <div class="mb-3">
-                        <label class="form-label" for="nama">Nama</label>
-                        <input class="form-control" id="nama" name="nama" type="text" placeholder="Nama Anda" />
-                      </div>
-                      <div class="mb-3">
-                        <label class="form-label" for="email">Email</label>
-                        <input class="form-control" id="email" name="email" type="email" placeholder="email@contoh.com" />
-                      </div>
-                      <div class="mb-3">
-                        <label class="form-label" for="pesan">Pesan</label>
-                        <textarea class="form-control" id="pesan" name="pesan" rows="4" placeholder="Tulis pesan Anda"></textarea>
-                      </div>
-                      <button type="submit" class="btn btn-brand">Kirim</button>
-                    </form>
-                  </div>
-                </div>
-              </div>
-              <div class="col-lg-6">
                 <div class="card border-0 shadow-soft h-100">
                   <div class="card-body">
                     <div class="mb-2 fw-semibold">Alamat</div>
